@@ -629,13 +629,19 @@ namespace StbImageSharp
 			return stbi__bitreverse16(v) >> (16 - bits);
 		}
 
-		public static int stbi__paeth(int a, int b, int c)
+        public static int stbi__paeth(int a, int b, int c)
 		{
-			var p = a + b - c;
-			var pa = CRuntime.abs(p - a);
-			var pb = CRuntime.abs(p - b);
-			var pc = CRuntime.abs(p - c);
-			if (pa <= pb && pa <= pc)
+			int p = a + b - c;
+
+			int pa = p - a;
+			int pb = p - b;
+			int pc = p - c;
+
+            pa = (pa + (pa >> 31)) ^ (pa >> 31);
+            pb = (pb + (pb >> 31)) ^ (pb >> 31);
+            pc = (pc + (pc >> 31)) ^ (pc >> 31);
+
+            if (pa <= pb && pa <= pc)
 				return a;
 			if (pb <= pc)
 				return b;
